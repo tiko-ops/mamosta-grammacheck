@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 
 const MAX = 10000;
 
@@ -9,28 +9,6 @@ export default function Page() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [usageInfo, setUsageInfo] = useState<string | null>(null);
-  const tokenRef = useRef<string | null>(null);
-
-  useEffect(() => {
-    const cb = () => {
-      // @ts-ignore
-      window.turnstile.render('#cf-turnstile', {
-        sitekey: process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY as string,
-        callback: (token: string) => (tokenRef.current = token),
-        'error-callback': () => (tokenRef.current = null),
-      });
-    };
-    const s = document.createElement('script');
-    s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onloadTurnstile&render=explicit';
-    // @ts-ignore
-    window.onloadTurnstile = cb;
-    document.body.appendChild(s);
-    return () => {
-      document.body.removeChild(s);
-      // @ts-ignore
-      delete window.onloadTurnstile;
-    };
-  }, []);
 
   const onSubmit = async () => {
     setError(null);
@@ -45,7 +23,7 @@ export default function Page() {
       const res = await fetch('/api/correct', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text, token: tokenRef.current }),
+        body: JSON.stringify({ text }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Något gick fel');
@@ -55,9 +33,6 @@ export default function Page() {
       setError(e.message || 'Något gick fel. Försök igen.');
     } finally {
       setLoading(false);
-      tokenRef.current = null;
-      // @ts-ignore
-      if (window.turnstile) window.turnstile.reset('#cf-turnstile');
     }
   };
 
@@ -80,7 +55,6 @@ export default function Page() {
             style={{ width: '100%', minHeight: 200, padding: 12, borderRadius: 8, border: '1px solid #ccc', fontSize: 16 }}
           />
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
-            <div id="cf-turnstile" />
             <button
               onClick={onSubmit}
               disabled={loading}
