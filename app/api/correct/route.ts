@@ -55,7 +55,35 @@ export async function POST(req: NextRequest) {
       await safeLog(ip, false, text.length, 'rate_limit');
       return NextResponse.json({ error: 'Begränsning nådd: försök igen om en stund.' }, { status: 429 });
     }
-    const usageNotice = used >= 48 ? `Obs! Du har använt ${used}/60 rättningar den här timmen.` : undefined;
+    const usageNotice =
+      used >= 48 ? `Obs! Du har använt ${used}/60 rättningar den här timmen.` : undefined;
 
     // OpenAI – korrektur endast svenska, bevara namn
-    const system = `Du är en svensk korrekturläsare. Korrigera stavning, grammatik och versaler utan att ändra betydelsen. Bevara person- och platsnamn som egennamn. Svara endast med den korrigerade texten utan
+    const system =
+      "Du är en svensk korrekturläsare. Korrigera stavning, grammatik och versaler utan att ändra betydelsen. Bevara person- och platsnamn som egennamn. Svara endast med den korrigerade texten utan förklaringar.";
+
+    const completion = await client.chat.completions.create({
+      model: MODEL,
+      messages: [
+        { role: 'system', content: system },
+        { role: 'user', content: text }
+      ],
+      temperature: 0.2,
+    });
+
+    const corrected = completion.choices[0]?.message?.content?.trim() || '';
+    await safeLog(ip, true, text.length);
+
+    return NextResponse.json({ corrected, usageNotice });
+  } catch {
+    return NextResponse.json({ error: 'Något gick fel. Försök igen.' }, { status: 500 });
+  }
+}
+
+async function safeLog(ip: string, ok: boolean, len: number, code?: string) {
+  try {
+    const key = `log:${Date.now()}:${ip}`;
+    await redis.hset(key, { ok: ok ? '1' : '0', len: String(len), code: code || '' });
+    await redis.expire(key, 172800); // 2 dagar
+  } catch {}
+}
