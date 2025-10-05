@@ -178,7 +178,7 @@ export default function Page() {
           }}
         />
 
-        {/* Kopiera/Rensa under resultatet (behålls ifall du vill ha även här) */}
+        {/* (valfritt) extra knappar under resultatet – kan tas bort helt */}
         <div style={{ display: 'flex', gap: 10 }}>
           <button
             onClick={() => navigator.clipboard.writeText(result)}
