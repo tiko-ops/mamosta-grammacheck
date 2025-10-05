@@ -64,7 +64,9 @@ export default function Page() {
   return (
     <div>
       <h1 style={{ fontSize: 28, marginBottom: 8 }}>Rätta din svenska text</h1>
-      <p style={{ marginBottom: 16 }}>Klistra in texten (max {MAX.toLocaleString('sv-SE')} tecken). Du får tillbaka en korrigerad version direkt nedanför.</p>
+      <p style={{ marginBottom: 16 }}>
+        Klistra in texten (max {MAX.toLocaleString('sv-SE')} tecken). Du får tillbaka en korrigerad version direkt nedanför.
+      </p>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 16 }}>
         <div id="editor" style={{ display: 'grid', gap: 8 }}>
@@ -79,7 +81,11 @@ export default function Page() {
           />
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
             <div id="cf-turnstile" />
-            <button onClick={onSubmit} disabled={loading} style={{ background: '#111', color: '#fff', padding: '10px 16px', borderRadius: 999, border: 'none', cursor: 'pointer' }}>
+            <button
+              onClick={onSubmit}
+              disabled={loading}
+              style={{ background: '#111', color: '#fff', padding: '10px 16px', borderRadius: 999, border: 'none', cursor: 'pointer' }}
+            >
               {loading ? 'Rättar…' : 'Rätta'}
             </button>
             <span style={{ marginLeft: 'auto', fontSize: 12, color: '#666' }}>{text.length}/{MAX}</span>
@@ -98,7 +104,37 @@ export default function Page() {
 
         <div id="output" style={{ display: 'grid', gap: 8 }}>
           <label htmlFor="result" style={{ fontWeight: 600 }}>Korrigerad text</label>
-          <textarea id="result" readOnly value={result} placeholder="Resultatet visas här…" style={{ width: '100%', minHeight: 200, padding: 12, borderRadius: 8, border: '1px solid #ccc', fontSize: 16, background: '#fafafa' }} />
+          <textarea
+            id="result"
+            readOnly
+            value={result}
+            placeholder="Resultatet visas här…"
+            style={{ width: '100%', minHeight: 200, padding: 12, borderRadius: 8, border: '1px solid #ccc', fontSize: 16, background: '#fafafa' }}
+          />
           <div style={{ display: 'flex', gap: 8 }}>
-            <button onClick={() => navigator.clipboard.writeText(result)} disabled={!result} style={{ border: '1px solid #ccc', background: '#fff', padding: '8px 12px', borderRadius: 8, cursor: 'pointer' }}>Kopiera</button>
-            <button onClick={() => setResult('')}
+            <button
+              onClick={() => navigator.clipboard.writeText(result)}
+              disabled={!result}
+              style={{ border: '1px solid #ccc', background: '#fff', padding: '8px 12px', borderRadius: 8, cursor: 'pointer' }}
+            >
+              Kopiera
+            </button>
+            <button
+              onClick={() => setResult('')}
+              disabled={!result}
+              style={{ border: '1px solid #ccc', background: '#fff', padding: '8px 12px', borderRadius: 8, cursor: 'pointer' }}
+            >
+              Rensa
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <style jsx>{`
+        @media (min-width: 900px) {
+          div > div { grid-template-columns: 1fr 1fr; }
+        }
+      `}</style>
+    </div>
+  );
+}
