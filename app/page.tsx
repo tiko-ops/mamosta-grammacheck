@@ -15,7 +15,7 @@ export default function Page() {
     const cb = () => {
       // @ts-ignore
       window.turnstile.render('#cf-turnstile', {
-        sitekey: process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY,
+        sitekey: process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY as string,
         callback: (token: string) => (tokenRef.current = token),
         'error-callback': () => (tokenRef.current = null),
       });
