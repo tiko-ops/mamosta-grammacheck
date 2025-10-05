@@ -11,7 +11,7 @@ export async function GET() {
         { role: 'system', content: 'Svara endast med ordet OK.' },
         { role: 'user', content: 'Test' }
       ],
-      temperature: 0,
+      temperature: 1,
     });
     const txt = completion.choices[0]?.message?.content?.trim() || '';
     return NextResponse.json({ ok: true, reply: txt });
