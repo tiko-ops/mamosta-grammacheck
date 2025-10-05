@@ -1,3 +1,5 @@
+//rebuild
+
 'use client';
 import { useState } from 'react';
 
@@ -179,3 +181,4 @@ export default function Page() {
     </div>
   );
 }
+//fix: close component + add clear button
