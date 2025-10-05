@@ -36,6 +36,13 @@ export default function Page() {
     }
   };
 
+  const onClear = () => {
+    setText('');
+    setResult('');
+    setError(null);
+    setUsageInfo(null);
+  };
+
   return (
     <div style={{ maxWidth: 960, margin: '0 auto', padding: '24px 16px' }}>
       <h1 style={{ fontSize: 28, marginBottom: 8 }}>Rätta din svenska text</h1>
@@ -65,156 +72,11 @@ export default function Page() {
           }}
         />
 
-        {/* Stor, centrerad Rätta-knapp med hover/press */}
-        {/* Stor, centrerad Rätta- och Rensa-knapp */}
-<div style={{ textAlign: 'center', display: 'flex', justifyContent: 'center', gap: 16, marginTop: 8 }}>
-  <button
-    onClick={onSubmit}
-    disabled={loading}
-    style={{
-      background: '#2196f3',
-      color: '#fff',
-      padding: '16px 40px',
-      borderRadius: 999,
-      border: 'none',
-      fontSize: 18,
-      fontWeight: 600,
-      cursor: 'pointer',
-      transition: 'background 0.25s, transform 0.1s, boxShadow 0.25s',
-      boxShadow: '0 6px 16px rgba(33,150,243,0.25)',
-    }}
-    onMouseEnter={(e) => (e.currentTarget.style.background = '#1976d2')}
-    onMouseLeave={(e) => (e.currentTarget.style.background = '#2196f3')}
-    onMouseDown={(e) => (e.currentTarget.style.transform = 'scale(0.98)')}
-    onMouseUp={(e) => (e.currentTarget.style.transform = 'scale(1)')}
-  >
-    {loading ? 'Rättar…' : 'Rätta'}
-  </button>
-
-  <button
-    onClick={() => {
-      setText('');
-      setResult('');
-      setError(null);
-      setUsageInfo(null);
-    }}
-    style={{
-      background: '#f5f5f5',
-      color: '#333',
-      padding: '16px 40px',
-      borderRadius: 999,
-      border: '1px solid #ccc',
-      fontSize: 18,
-      fontWeight: 500,
-      cursor: 'pointer',
-      transition: 'background 0.25s, transform 0.1s',
-    }}
-    onMouseEnter={(e) => (e.currentTarget.style.background = '#e0e0e0')}
-    onMouseLeave={(e) => (e.currentTarget.style.background = '#f5f5f5')}
-    onMouseDown={(e) => (e.currentTarget.style.transform = 'scale(0.98)')}
-    onMouseUp={(e) => (e.currentTarget.style.transform = 'scale(1)')}
-  >
-    Rensa
-  </button>
-</div>
-
-
-        <div style={{ marginTop: 8, textAlign: 'right', fontSize: 13, color: '#777' }}>
-          {text.length}/{MAX}
-        </div>
-
-        {usageInfo && (
-          <div
-            role="status"
-            style={{
-              background: '#fff3cd',
-              color: '#664d03',
-              border: '1px solid #ffe69c',
-              padding: 8,
-              borderRadius: 8,
-              marginTop: 10,
-            }}
-          >
-            {usageInfo}
-          </div>
-        )}
-
-        {error && (
-          <div
-            role="alert"
-            style={{
-              background: '#fde2e1',
-              color: '#8a1c1c',
-              border: '1px solid #f5c2c7',
-              padding: 8,
-              borderRadius: 8,
-              marginTop: 10,
-            }}
-          >
-            {error}
-          </div>
-        )}
-      </div>
-
-      {/* Korrigerad text */}
-      <div>
-        <label htmlFor="result" style={{ fontWeight: 600, display: 'block', marginBottom: 8 }}>
-          Korrigerad text
-        </label>
-        <textarea
-          id="result"
-          readOnly
-          value={result}
-          placeholder="Resultatet visas här…"
-          style={{
-            width: '100%',
-            minHeight: 220,
-            padding: 14,
-            borderRadius: 10,
-            border: '1px solid #ccc',
-            fontSize: 16,
-            background: '#fafafa',
-            marginBottom: 10,
-          }}
-        />
-
-        {/* Kopiera/Rensa nära rutan med hover */}
-        <div style={{ display: 'flex', gap: 10 }}>
+        {/* Rätta + Rensa, sida vid sida */}
+        <div style={{ display: 'flex', justifyContent: 'center', gap: 16, marginTop: 8 }}>
           <button
-            onClick={() => navigator.clipboard.writeText(result)}
-            disabled={!result}
+            onClick={onSubmit}
+            disabled={loading}
             style={{
-              border: '1px solid #ccc',
-              background: result ? '#f8f9fa' : '#eee',
-              padding: '10px 18px',
-              borderRadius: 8,
-              cursor: result ? 'pointer' : 'not-allowed',
-              transition: 'background 0.25s',
-            }}
-            onMouseEnter={(e) => result && (e.currentTarget.style.background = '#e0e0e0')}
-            onMouseLeave={(e) => result && (e.currentTarget.style.background = '#f8f9fa')}
-          >
-            Kopiera
-          </button>
-
-          <button
-            onClick={() => setResult('')}
-            disabled={!result}
-            style={{
-              border: '1px solid #ccc',
-              background: result ? '#f8f9fa' : '#eee',
-              padding: '10px 18px',
-              borderRadius: 8,
-              cursor: result ? 'pointer' : 'not-allowed',
-              transition: 'background 0.25s',
-            }}
-            onMouseEnter={(e) => result && (e.currentTarget.style.background = '#e0e0e0')}
-            onMouseLeave={(e) => result && (e.currentTarget.style.background = '#f8f9fa')}
-          >
-            Rensa
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
+              background: '#2196f3',
+              color: '#ff
