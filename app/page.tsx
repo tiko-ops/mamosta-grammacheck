@@ -66,30 +66,58 @@ export default function Page() {
         />
 
         {/* Stor, centrerad Rätta-knapp med hover/press */}
-        <div style={{ textAlign: 'center' }}>
-          <button
-            onClick={onSubmit}
-            disabled={loading}
-            style={{
-              background: '#2196f3',
-              color: '#fff',
-              padding: '16px 40px',
-              borderRadius: 999,
-              border: 'none',
-              fontSize: 18,
-              fontWeight: 600,
-              cursor: 'pointer',
-              transition: 'background 0.25s, transform 0.1s, boxShadow 0.25s',
-              boxShadow: '0 6px 16px rgba(33,150,243,0.25)',
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.background = '#1976d2')}
-            onMouseLeave={(e) => (e.currentTarget.style.background = '#2196f3')}
-            onMouseDown={(e) => (e.currentTarget.style.transform = 'scale(0.98)')}
-            onMouseUp={(e) => (e.currentTarget.style.transform = 'scale(1)')}
-          >
-            {loading ? 'Rättar…' : 'Rätta'}
-          </button>
-        </div>
+        {/* Stor, centrerad Rätta- och Rensa-knapp */}
+<div style={{ textAlign: 'center', display: 'flex', justifyContent: 'center', gap: 16, marginTop: 8 }}>
+  <button
+    onClick={onSubmit}
+    disabled={loading}
+    style={{
+      background: '#2196f3',
+      color: '#fff',
+      padding: '16px 40px',
+      borderRadius: 999,
+      border: 'none',
+      fontSize: 18,
+      fontWeight: 600,
+      cursor: 'pointer',
+      transition: 'background 0.25s, transform 0.1s, boxShadow 0.25s',
+      boxShadow: '0 6px 16px rgba(33,150,243,0.25)',
+    }}
+    onMouseEnter={(e) => (e.currentTarget.style.background = '#1976d2')}
+    onMouseLeave={(e) => (e.currentTarget.style.background = '#2196f3')}
+    onMouseDown={(e) => (e.currentTarget.style.transform = 'scale(0.98)')}
+    onMouseUp={(e) => (e.currentTarget.style.transform = 'scale(1)')}
+  >
+    {loading ? 'Rättar…' : 'Rätta'}
+  </button>
+
+  <button
+    onClick={() => {
+      setText('');
+      setResult('');
+      setError(null);
+      setUsageInfo(null);
+    }}
+    style={{
+      background: '#f5f5f5',
+      color: '#333',
+      padding: '16px 40px',
+      borderRadius: 999,
+      border: '1px solid #ccc',
+      fontSize: 18,
+      fontWeight: 500,
+      cursor: 'pointer',
+      transition: 'background 0.25s, transform 0.1s',
+    }}
+    onMouseEnter={(e) => (e.currentTarget.style.background = '#e0e0e0')}
+    onMouseLeave={(e) => (e.currentTarget.style.background = '#f5f5f5')}
+    onMouseDown={(e) => (e.currentTarget.style.transform = 'scale(0.98)')}
+    onMouseUp={(e) => (e.currentTarget.style.transform = 'scale(1)')}
+  >
+    Rensa
+  </button>
+</div>
+
 
         <div style={{ marginTop: 8, textAlign: 'right', fontSize: 13, color: '#777' }}>
           {text.length}/{MAX}
