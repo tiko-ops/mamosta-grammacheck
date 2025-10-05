@@ -1,6 +1,7 @@
 .mamosta-logo {
-  transition: transform .25s ease;
+  transition: transform 0.25s ease;
 }
+
 .mamosta-logo:hover {
   transform: scale(1.05);
 }
