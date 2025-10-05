@@ -79,7 +79,7 @@ export default function Page() {
               fontSize: 18,
               fontWeight: 600,
               cursor: 'pointer',
-              transition: 'background 0.25s, transform 0.1s, box-shadow 0.25s',
+              transition: 'background 0.25s, transform 0.1s, boxShadow 0.25s',
               boxShadow: '0 6px 16px rgba(33,150,243,0.25)',
             }}
             onMouseEnter={(e) => (e.currentTarget.style.background = '#1976d2')}
@@ -110,6 +110,7 @@ export default function Page() {
             {usageInfo}
           </div>
         )}
+
         {error && (
           <div
             role="alert"
@@ -167,3 +168,25 @@ export default function Page() {
           >
             Kopiera
           </button>
+
+          <button
+            onClick={() => setResult('')}
+            disabled={!result}
+            style={{
+              border: '1px solid #ccc',
+              background: result ? '#f8f9fa' : '#eee',
+              padding: '10px 18px',
+              borderRadius: 8,
+              cursor: result ? 'pointer' : 'not-allowed',
+              transition: 'background 0.25s',
+            }}
+            onMouseEnter={(e) => result && (e.currentTarget.style.background = '#e0e0e0')}
+            onMouseLeave={(e) => result && (e.currentTarget.style.background = '#f8f9fa')}
+          >
+            Rensa
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
