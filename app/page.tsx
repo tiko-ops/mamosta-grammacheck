@@ -15,7 +15,6 @@ export default function Home() {
     setUsageNotice(null);
 
     try {
-      // 👇 ändrad till /api/correct
       const response = await fetch("/api/correct", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -35,7 +34,6 @@ export default function Home() {
       const decoder = new TextDecoder();
       let result = "";
 
-      // Läs strömmen i realtid
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
@@ -60,29 +58,29 @@ export default function Home() {
   };
 
   return (
-    <main className="flex flex-col items-center justify-center min-h-screen p-4 bg-gray-50">
-      <div className="w-full max-w-2xl bg-white p-6 rounded-2xl shadow-md">
-        <div className="flex flex-col gap-4">
+    <main className="flex flex-col items-center justify-center min-h-screen bg-gray-50 py-12 px-4">
+      <div className="w-full max-w-3xl bg-white p-8 rounded-2xl shadow-md">
+        <div className="flex flex-col gap-6">
           {/* Rubrik */}
-          <h1 className="text-2xl font-bold text-center text-gray-800">
+          <h1 className="text-3xl font-bold text-center text-gray-800">
             Mamosta Grammatik-kontroll
           </h1>
 
           {/* Textinput */}
           <textarea
-            className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
-            rows={6}
+            className="w-full p-4 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-gray-800 resize-none"
+            rows={8}
             placeholder="Skriv eller klistra in din text här..."
             value={input}
             onChange={(e) => setInput(e.target.value)}
           />
 
           {/* Knappar */}
-          <div className="flex gap-3 justify-center">
+          <div className="flex gap-4 justify-center">
             <button
               onClick={handleCheck}
               disabled={loading}
-              className={`px-6 py-2 rounded-lg text-white font-semibold shadow-sm transition-all ${
+              className={`px-8 py-2 rounded-lg text-white font-semibold shadow-sm transition-all ${
                 loading
                   ? "bg-gray-400 cursor-not-allowed"
                   : "bg-blue-600 hover:bg-blue-700"
@@ -94,20 +92,20 @@ export default function Home() {
             <button
               onClick={handleClear}
               disabled={loading}
-              className="px-6 py-2 rounded-lg border border-gray-300 hover:bg-gray-100 transition-all"
+              className="px-8 py-2 rounded-lg border border-gray-300 hover:bg-gray-100 transition-all"
             >
               Rensa
             </button>
           </div>
 
           {/* Output */}
-          <div className="mt-4">
-            <h2 className="text-lg font-semibold text-gray-700 mb-2">
+          <div>
+            <h2 className="text-xl font-semibold text-gray-700 mb-3">
               Korrigerad text
             </h2>
             <textarea
-              className="w-full p-3 border rounded-lg bg-gray-50 focus:outline-none"
-              rows={6}
+              className="w-full p-4 border rounded-lg bg-gray-50 text-gray-800 focus:outline-none resize-none"
+              rows={8}
               readOnly
               value={output}
             />
