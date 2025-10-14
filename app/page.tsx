@@ -15,7 +15,8 @@ export default function Home() {
     setUsageNotice(null);
 
     try {
-      const response = await fetch("/api/check", {
+      // 👇 ändrad till /api/correct
+      const response = await fetch("/api/correct", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text: input }),
@@ -34,7 +35,7 @@ export default function Home() {
       const decoder = new TextDecoder();
       let result = "";
 
-      // Läs bitar från strömmen i realtid
+      // Läs strömmen i realtid
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
@@ -63,7 +64,9 @@ export default function Home() {
       <div className="w-full max-w-2xl bg-white p-6 rounded-2xl shadow-md">
         <div className="flex flex-col gap-4">
           {/* Rubrik */}
-          <h1 className="text-2xl font-bold text-center text-gray-800">Mamosta Grammatik-kontroll</h1>
+          <h1 className="text-2xl font-bold text-center text-gray-800">
+            Mamosta Grammatik-kontroll
+          </h1>
 
           {/* Textinput */}
           <textarea
@@ -99,7 +102,9 @@ export default function Home() {
 
           {/* Output */}
           <div className="mt-4">
-            <h2 className="text-lg font-semibold text-gray-700 mb-2">Korrigerad text</h2>
+            <h2 className="text-lg font-semibold text-gray-700 mb-2">
+              Korrigerad text
+            </h2>
             <textarea
               className="w-full p-3 border rounded-lg bg-gray-50 focus:outline-none"
               rows={6}
@@ -110,7 +115,9 @@ export default function Home() {
 
           {/* Usage notice */}
           {usageNotice && (
-            <p className="text-sm text-yellow-600 text-center mt-2">{usageNotice}</p>
+            <p className="text-sm text-yellow-600 text-center mt-2">
+              {usageNotice}
+            </p>
           )}
         </div>
       </div>
