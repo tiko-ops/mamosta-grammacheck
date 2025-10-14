@@ -117,3 +117,5 @@ export default function Home() {
     </main>
   );
 }
+
+Added streaming response to text correction
