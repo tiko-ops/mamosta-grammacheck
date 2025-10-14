@@ -1,8 +1,9 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import OpenAI from 'openai';
 import { Ratelimit } from '@upstash/ratelimit';
 import { Redis } from '@upstash/redis';
 
+// --- Konfiguration ---
 const redis = Redis.fromEnv();
 const rl = new Ratelimit({
   redis,
@@ -15,51 +16,76 @@ const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 const MODEL = process.env.OPENAI_MODEL || 'gpt-4o-mini';
 const MAX = 10000;
 
+// --- API-hanterare ---
 export async function POST(req: NextRequest) {
   try {
     const { text } = await req.json();
     const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || '0.0.0.0';
 
     if (typeof text !== 'string' || !text.trim()) {
-      return NextResponse.json({ error: 'Ingen text angiven.' }, { status: 400 });
+      return new Response(JSON.stringify({ error: 'Ingen text angiven.' }), { status: 400 });
     }
     if (text.length > MAX) {
-      return NextResponse.json({ error: `Texten får vara max ${MAX} tecken.` }, { status: 400 });
+      return new Response(JSON.stringify({ error: `Texten får vara max ${MAX} tecken.` }), { status: 400 });
     }
 
-    // Rate limit
+    // --- Rate limit ---
     const { success, remaining } = await rl.limit(`ip:${ip}`);
     const used = 60 - remaining;
     if (!success) {
       await safeLog(ip, false, text.length, 'rate_limit');
-      return NextResponse.json({ error: 'Begränsning nådd: försök igen om en stund.' }, { status: 429 });
+      return new Response(JSON.stringify({ error: 'Begränsning nådd: försök igen om en stund.' }), { status: 429 });
     }
     const usageNotice =
       used >= 48 ? `Obs! Du har använt ${used}/60 rättningar den här timmen.` : undefined;
 
-    // OpenAI – svensk korrektur, bevara namn
+    // --- Förbered OpenAI ---
     const system =
       "Du är en svensk korrekturläsare. Korrigera stavning, grammatik och versaler utan att ändra betydelsen. Bevara person- och platsnamn som egennamn. Svara endast med den korrigerade texten utan förklaringar.";
 
-    const completion = await client.chat.completions.create({
+    // --- Skapa streaming-svar ---
+    const response = await client.chat.completions.create({
       model: MODEL,
       messages: [
         { role: 'system', content: system },
         { role: 'user', content: text },
       ],
-      // gpt-4o-mini kräver standardtemp; sätt 1 för säkerhets skull
-      temperature: 1,
+      temperature: 0.2,
+      stream: true,
     });
 
-    const corrected = completion.choices[0]?.message?.content?.trim() || '';
-    await safeLog(ip, true, text.length);
-    return NextResponse.json({ corrected, usageNotice });
+    const encoder = new TextEncoder();
+    const stream = new ReadableStream({
+      async start(controller) {
+        try {
+          for await (const chunk of response) {
+            const delta = chunk.choices[0]?.delta?.content;
+            if (delta) controller.enqueue(encoder.encode(delta));
+          }
+        } catch (err) {
+          console.error('Stream error:', err);
+          controller.enqueue(encoder.encode('\n[Fel vid strömning av svar]'));
+        } finally {
+          controller.close();
+          await safeLog(ip, true, text.length);
+        }
+      },
+    });
+
+    // --- Skicka som textström ---
+    return new Response(stream, {
+      headers: {
+        'Content-Type': 'text/plain; charset=utf-8',
+        'X-Usage-Notice': usageNotice || '',
+      },
+    });
   } catch (err) {
     console.error('API error:', err);
-    return NextResponse.json({ error: 'Serverfel i /api/correct' }, { status: 500 });
+    return new Response(JSON.stringify({ error: 'Serverfel i /api/check' }), { status: 500 });
   }
 }
 
+// --- Loggning ---
 async function safeLog(ip: string, ok: boolean, len: number, code?: string) {
   try {
     const key = `log:${Date.now()}:${ip}`;
